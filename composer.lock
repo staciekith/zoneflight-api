@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cf18f07a9014d60b60784564e2378b00",
-    "content-hash": "f20af1e2cd0ccd5545a4d38b26b88683",
+    "hash": "7d1d351d875f8953eea39aa84625e9d3",
+    "content-hash": "b815e9d701accf0f1acaf76d890c9c1d",
     "packages": [
         {
             "name": "dflydev/doctrine-orm-service-provider",
@@ -748,6 +748,98 @@
             "time": "2012-12-21 11:40:51"
         },
         {
+            "name": "saxulum/saxulum-classfinder",
+            "version": "1.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/saxulum/saxulum-classfinder.git",
+                "reference": "3cdab7011dcc381dad6224646ed703b52ffdcbea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/saxulum/saxulum-classfinder/zipball/3cdab7011dcc381dad6224646ed703b52ffdcbea",
+                "reference": "3cdab7011dcc381dad6224646ed703b52ffdcbea",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Saxulum\\ClassFinder\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dominik Zogg",
+                    "email": "dominik.zogg@gmail.com"
+                }
+            ],
+            "description": "Saxulum ClassFinder",
+            "keywords": [
+                "class",
+                "classfinder"
+            ],
+            "time": "2015-08-24 19:15:24"
+        },
+        {
+            "name": "saxulum/saxulum-console",
+            "version": "3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/saxulum/saxulum-console.git",
+                "reference": "9fbff9cd6ba71c844c1638c32b1991617871f82a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/saxulum/saxulum-console/zipball/9fbff9cd6ba71c844c1638c32b1991617871f82a",
+                "reference": "9fbff9cd6ba71c844c1638c32b1991617871f82a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3,<8.0",
+                "pimple/pimple": ">=2.1,<4",
+                "saxulum/saxulum-classfinder": "~1.1,>=1.1.1",
+                "symfony/console": "~2.3|~3.0",
+                "symfony/finder": "~2.3|~3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Saxulum\\Console": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dominik Zogg",
+                    "email": "dominik.zogg@gmail.com"
+                }
+            ],
+            "description": "Saxulum Console Provider",
+            "keywords": [
+                "console",
+                "pimple",
+                "saxulum",
+                "silex"
+            ],
+            "time": "2015-12-01 11:57:28"
+        },
+        {
             "name": "saxulum/saxulum-doctrine-orm-manager-registry-provider",
             "version": "3.1.0",
             "source": {
@@ -1068,6 +1160,55 @@
                 }
             ],
             "description": "Symfony EventDispatcher Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-06-29 05:41:56"
+        },
+        {
+            "name": "symfony/finder",
+            "version": "v3.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/finder.git",
+                "reference": "8201978de88a9fa0923e18601bb17f1df9c721e7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/8201978de88a9fa0923e18601bb17f1df9c721e7",
+                "reference": "8201978de88a9fa0923e18601bb17f1df9c721e7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Finder\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
             "time": "2016-06-29 05:41:56"
         },
@@ -3167,55 +3308,6 @@
                 }
             ],
             "description": "Symfony Filesystem Component",
-            "homepage": "https://symfony.com",
-            "time": "2016-06-29 05:41:56"
-        },
-        {
-            "name": "symfony/finder",
-            "version": "v3.1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/finder.git",
-                "reference": "8201978de88a9fa0923e18601bb17f1df9c721e7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/8201978de88a9fa0923e18601bb17f1df9c721e7",
-                "reference": "8201978de88a9fa0923e18601bb17f1df9c721e7",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5.9"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.1-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Finder\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
             "time": "2016-06-29 05:41:56"
         },

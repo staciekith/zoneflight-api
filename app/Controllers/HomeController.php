@@ -8,7 +8,7 @@ use Silex\Api\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AirportController implements ControllerProviderInterface
+class HomeController implements ControllerProviderInterface
 {
     /**
      * {@inheritdoc}
@@ -18,13 +18,13 @@ class AirportController implements ControllerProviderInterface
         /* @var $controllers ControllerCollection */
         $controllers = $app['controllers_factory'];
 
-        $controllers->get('/airports', [$this, 'getAirports']);
+        $controllers->get('/', [$this, 'index']);
 
         return $controllers;
     }
 
-    public function getAirports(Application $app)
+    public function index(Application $app)
     {
-        return $app->json("airports", 200);
+        return $app->json("home", 200);
     }
 }

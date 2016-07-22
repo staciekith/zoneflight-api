@@ -25,6 +25,14 @@ class AirportController implements ControllerProviderInterface
 
     public function getAirports(Application $app)
     {
-        return $app->json("airports", 200);
+        $response = [
+            "name"    => "airports",
+            "content" => "hello, it's airtport controller",
+            "other"   => [
+                "other_content"       => "other_content_msg",
+                "other_content_again" => "other_content_again_msg"
+            ]
+        ];
+        return $app->json($response, 200);
     }
 }

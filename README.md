@@ -1,6 +1,8 @@
 # zoneflight-api
 ZoneFlight API (back)
 
+[![Build Status](https://travis-ci.org/staciekith/zoneflight-api.png)](https://travis-ci.org/staciekith/zoneflight-api)
+
 Installation :
 ```
 composer install

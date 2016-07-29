@@ -8,6 +8,8 @@ use Silex\Api\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use ZoneFlight\Entities\Airport;
+
 class AirportController implements ControllerProviderInterface
 {
     /**
@@ -34,6 +36,11 @@ class AirportController implements ControllerProviderInterface
             ]
         ];
 
-        return $app->json($response, 200);
+        $a = new Airport();
+        $a->setName("Orly");
+        $app["orm.em"]->persist($a);
+        $app["orm.em"]->flush();
+
+        return $app->json($a, 200);
     }
 }

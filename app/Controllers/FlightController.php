@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use ZoneFlight\Entities\Airport;
+use ZoneFlight\Utils\SkyscannerUtils;
 
 class FlightController implements ControllerProviderInterface
 {
@@ -27,6 +28,36 @@ class FlightController implements ControllerProviderInterface
 
     public function getFlights(Application $app, Request $req)
     {
-        return $app->json("ok", 200);
+        //$params = $req->query->all();
+
+        $mandatory = [
+            "country",
+            "currency",
+            "locale",
+            "originplace",
+            "destinationplace",
+            "outbounddate",
+            "adults"
+        ];
+
+        $params = [
+            "country"          => "FR",
+            "currency"         => "EUR",
+            "locale"           => "FR",
+            "originplace"      => "CDG-sky",
+            "destinationplace" => "KIX-sky",
+            "outbounddate"     => "2016-09-23",
+            "adults"           => 2
+        ];
+
+        if (false === SkyscannerUtils::verifyFields($mandatory, $params)) {
+            return $app->abort(400, "Missing fields");
+        }
+
+        $session_url = SkyscannerUtils::getSession($app, $params);
+
+        $flights = SkyscannerUtils::getFlights($app, $session_url);
+
+        return $app->json($flights, 200);
     }
 }

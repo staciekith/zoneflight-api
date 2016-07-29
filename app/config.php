@@ -54,6 +54,7 @@ class Config implements ServiceProviderInterface
         $app['application_env']       = $this->env;
         $app['application_path']      = realpath(__DIR__ . "/../");
         $app['application_namespace'] = __NAMESPACE__;
+        $app['skyscanner_api_key']    = "zo161174458452588133442487111447";
 
         $app['db_host'] = getenv("ZONEFLIGHT_DATABASE_HOST");
         $app['db_name'] = getenv("ZONEFLIGHT_DATABASE_NAME");

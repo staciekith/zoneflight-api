@@ -24,3 +24,10 @@ On accède via :
 ```
 http://localhost:8080/
 ```
+
+
+
+POUR LA DATABASE :
+Une fois la database `zoneflight` créée, il faut :
+- créer la table `Airport` : /bin/database.sql
+- lancer le script `/bin/import_airports.php` avec `APPLICATION_ENV=development ./bin/import_airports.php`

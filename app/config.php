@@ -48,7 +48,7 @@ class Config implements ServiceProviderInterface
      */
     private function registerEnvironmentParams(Application $app)
     {
-        //include "Utils/Silex/Middlewares.php";
+        include "Utils/Silex/Middlewares.php";
 
         $app['application_name']      = 'zoneflight-api';
         $app['application_env']       = $this->env;
@@ -93,6 +93,18 @@ class Config implements ServiceProviderInterface
                     'namespace' => "{$app['application_namespace']}\\Entities",
                 ),
             ),
+        );
+
+        // Connect repositories
+        // do $app["repositories"]("MyClass") instead of $app["orm.em"]->getRepository("MyClass")
+        $app["repositories"] = $app->protect(
+            function ($repository_name) use ($app) {
+                $class_name = "\\{$app['orm.em.options']['mappings'][0]['namespace']}\\". $repository_name;
+                if (class_exists($class_name)) {
+                    return $app['orm.em']->getRepository($class_name);
+                }
+                return null;
+            }
         );
 
         $app->register(new ConsoleProvider());

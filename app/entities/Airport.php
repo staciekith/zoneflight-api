@@ -24,9 +24,9 @@ class Airport implements \JsonSerializable
     protected $airport_code;
 
     /**
-     * @Column(type="float", name="long", nullable=false)
+     * @Column(type="float", name="lon", nullable=false)
      */
-    protected $long;
+    protected $lon;
 
     /**
      * @Column(type="float", name="lat", nullable=false)
@@ -57,7 +57,15 @@ class Airport implements \JsonSerializable
     public function toArray()
     {
         return [
-            "name" => $this->getName()
+            "id"           => $this->getId(),
+            "name"         => $this->getName(),
+            "airport_code" => $this->getAirportCode(),
+            "lon"          => $this->getLon(),
+            "lat"          => $this->getLat(),
+            "country"      => $this->getCountry(),
+            "state"        => $this->getState(),
+            "city"         => $this->getCity(),
+            "timezone"     => $this->getTimezone()
         ];
     }
 
@@ -95,13 +103,13 @@ class Airport implements \JsonSerializable
     }
 
     /**
-     * Gets the value of long.
+     * Gets the value of lon.
      *
      * @return float
      */
-    public function getLong()
+    public function getLon()
     {
-        return $this->long;
+        return $this->lon;
     }
 
     /**
@@ -186,15 +194,15 @@ class Airport implements \JsonSerializable
     }
 
     /**
-     * Sets the value of long.
+     * Sets the value of lon.
      *
-     * @param float $long the long
+     * @param float $lon the lon
      *
      * @return self
      */
-    public function setLong($long)
+    public function setLon($lon)
     {
-        $this->long = $long;
+        $this->lon = $lon;
 
         return $this;
     }

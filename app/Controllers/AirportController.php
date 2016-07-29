@@ -22,20 +22,22 @@ class AirportController implements ControllerProviderInterface
 
         $controllers->get('/airports', [$this, 'getAirports']);
 
+        $controllers->get('/airports/{airport}', [$this, 'getAirport'])
+                    ->assert("airport", "\d+")
+                    ->convert("airport", $app["findOneOr404"]('Airport', 'id'));
+
         return $controllers;
     }
 
     public function getAirports(Application $app)
     {
-        $response = [
-            "name"    => "airports",
-            "content" => "hello, it's airtport controller",
-            "other"   => [
-                "other_content"       => "other_content_msg",
-                "other_content_again" => "other_content_again_msg"
-            ]
-        ];
+        $airports = $app["repositories"]("Airport")->findAll();
 
-        return $app->json($response, 200);
+        return $app->json($airports, 200);
+    }
+
+    public function getAirport(Application $app, Airport $airport)
+    {
+        return $app->json($airport, 200);
     }
 }

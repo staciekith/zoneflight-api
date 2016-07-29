@@ -24,8 +24,8 @@ class Config implements ServiceProviderInterface
     {
         if (null !== $env) {
             $this->env = $env;
-            if (true === file_exists(__DIR__ . "/env/{$this->env}.php")) {
-                require_once __DIR__ . "/env/{$this->env}.php";
+            if (true === file_exists(__DIR__ . "/Env/{$this->env}.php")) {
+                require_once __DIR__ . "/Env/{$this->env}.php";
             }
         }
     }

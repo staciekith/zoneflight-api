@@ -36,11 +36,6 @@ class AirportController implements ControllerProviderInterface
             ]
         ];
 
-        $a = new Airport();
-        $a->setName("Orly");
-        $app["orm.em"]->persist($a);
-        $app["orm.em"]->flush();
-
-        return $app->json($a, 200);
+        return $app->json($response, 200);
     }
 }

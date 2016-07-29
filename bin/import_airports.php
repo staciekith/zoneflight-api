@@ -9,6 +9,11 @@ $file = file_get_contents( __DIR__ . "/airports.json");
 $airports = json_decode($file, true);
 
 foreach ($airports as $airport) {
+
+    if ("Airports" !== $airport["type"]) {
+        continue;
+    }
+
     $new_airport = new Airport();
     $new_airport->setName($airport["name"]);
     $new_airport->setAirportCode($airport["code"]);

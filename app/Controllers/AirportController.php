@@ -33,6 +33,7 @@ class AirportController implements ControllerProviderInterface
                 "other_content_again" => "other_content_again_msg"
             ]
         ];
+
         return $app->json($response, 200);
     }
 }

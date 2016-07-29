@@ -8,6 +8,8 @@ use Silex\Provider;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
+use Silex\Provider\DoctrineServiceProvider;
+use Dflydev\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\Console\Provider\ConsoleProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Provider\DoctrineOrmManagerRegistryProvider;
 
@@ -33,8 +35,29 @@ class Config implements ServiceProviderInterface
      */
     public function register(Container $app)
     {
+        $this->registerEnvironmentParams($app);
         $this->registerServiceProviders($app);
         $this->registerRoutes($app);
+    }
+
+    /**
+     * Set up environmental variables
+     *
+     * @param Application $app Silex Application
+     *
+     */
+    private function registerEnvironmentParams(Application $app)
+    {
+        //include "Utils/Silex/Middlewares.php";
+
+        $app['application_name']      = 'zoneflight-api';
+        $app['application_env']       = $this->env;
+        $app['application_path']      = realpath(__DIR__ . "/../");
+        $app['application_namespace'] = __NAMESPACE__;
+
+        $app['db_host'] = getenv("ZONEFLIGHT_DATABASE_HOST");
+        $app['db_name'] = getenv("ZONEFLIGHT_DATABASE_NAME");
+        $app['db_user'] = getenv("ZONEFLIGHT_DATABASE_USER");
     }
 
     /**
@@ -45,13 +68,39 @@ class Config implements ServiceProviderInterface
     private function registerServiceProviders(Application $app)
     {
         $app->register(new Provider\ServiceControllerServiceProvider());
+
+        $app->register(new DoctrineServiceProvider());
+        $app->register(new DoctrineOrmServiceProvider());
+
+        // Doctrine (db)
+        $app['db.options'] = array(
+            'driver'   => 'pdo_mysql',
+            'charset'  => 'utf8',
+            'host'     => $app['db_host'],
+            'dbname'   => $app['db_name'],
+            'user'     => $app['db_user'],
+            'password' => '',
+        );
+
+        // Doctrine (orm)
+        $app['orm.proxies_dir'] = $app['application_path'] . '/cache/doctrine/proxies';
+        $app['orm.default_cache'] = 'array';
+        $app['orm.em.options'] = array(
+            'mappings' => array(
+                array(
+                    'type' => 'annotation',
+                    'path' => $app['application_path'] . '/app',
+                    'namespace' => "{$app['application_namespace']}\\Entities",
+                ),
+            ),
+        );
+
         $app->register(new ConsoleProvider());
         $app->register(new DoctrineOrmManagerRegistryProvider());
     }
 
     /**
      * Mount all controllers and routes
-     * Set corresponding endpoints on the controller classes
      *
      * @param  Application $app Silex Application
      *

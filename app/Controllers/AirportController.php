@@ -26,9 +26,18 @@ class AirportController implements ControllerProviderInterface
                     ->assert("airport", "\d+")
                     ->convert("airport", $app["findOneOr404"]('Airport', 'id'));
 
+        $controllers->get('/airports/circle', [$this, 'getAirportForCircle']);
+
         return $controllers;
     }
 
+    /**
+     * Récupérer tous les aéroports de la base
+     *
+     * @param $app      Application
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function getAirports(Application $app)
     {
         $airports = $app["repositories"]("Airport")->findAll();
@@ -36,8 +45,29 @@ class AirportController implements ControllerProviderInterface
         return $app->json($airports, 200);
     }
 
+    /**
+     * Récupérer un aéroport via son id
+     *
+     * @param $app      Application
+     * @param $airport  Airport
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function getAirport(Application $app, Airport $airport)
     {
         return $app->json($airport, 200);
+    }
+
+    /**
+     * Récupérer les aéroports dans un cercle
+     *
+     * @param $app      Application
+     * @param $req      Request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function getAirportForCircle(Application $app, Request $req)
+    {
+        return $app->json("ok", 200);
     }
 }

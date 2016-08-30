@@ -8,6 +8,14 @@ use GuzzleHttp\Psr7\Request;
 
 class SkyscannerUtils
 {
+    /**
+     * Récupérer une session Skyscanner
+     *
+     * @param $app      Application
+     * @param $params   array
+     *
+     * @return string
+     */
     public static function getSession(Application $app, $params)
     {
         $params["apiKey"] = $app['skyscanner_api_key'];
@@ -22,6 +30,14 @@ class SkyscannerUtils
         return $response->getHeaders()["Location"][0];
     }
 
+    /**
+     * Récupérer les vols via l'API Skyscanner
+     *
+     * @param $app          Application
+     * @param $session_url  string
+     *
+     * @return JSON
+     */
     public static function getFlights(Application $app, $session_url)
     {
         $client = new Client();
@@ -37,6 +53,14 @@ class SkyscannerUtils
     }
 
     // A voir après si on ne fait pas une entité Session et des validators symfony
+    /**
+     * Vérifie les paramètres entrés
+     *
+     * @param $mandatory    array
+     * @param $fields       array
+     *
+     * @return boolean
+     */
     public static function verifyFields($mandatory, $fields)
     {
         $missing_fields = array_diff($mandatory, array_keys($fields));

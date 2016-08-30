@@ -21,12 +21,24 @@ class FlightController implements ControllerProviderInterface
         /* @var $controllers ControllerCollection */
         $controllers = $app['controllers_factory'];
 
-        $controllers->get('/flights', [$this, 'getFlights']);
+        $controllers->get('/flights', [$this, 'getFlightsFromAtoB']);
+
+        $controllers->get('/flights/departure', [$this, 'getFlightsFromXtoA']);
+
+        $controllers->get('/flights/arrival', [$this, 'getFlightsFromAtoX']);
 
         return $controllers;
     }
 
-    public function getFlights(Application $app, Request $req)
+    /**
+     * Récupérer les vols d'un point A vers un point B
+     *
+     * @param $app      Application
+     * @param $req      Request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function getFlightsFromAtoB(Application $app, Request $req)
     {
         //$params = $req->query->all();
 
@@ -47,7 +59,8 @@ class FlightController implements ControllerProviderInterface
             "originplace"      => "CDG-sky",
             "destinationplace" => "KIX-sky",
             "outbounddate"     => "2016-09-23",
-            "adults"           => 2
+            "adults"           => 2,
+            "groupPricing"     => true
         ];
 
         if (false === SkyscannerUtils::verifyFields($mandatory, $params)) {
@@ -59,5 +72,31 @@ class FlightController implements ControllerProviderInterface
         $flights = SkyscannerUtils::getFlights($app, $session_url);
 
         return $app->json($flights, 200);
+    }
+
+    /**
+     * Récupérer les vols de X points vers un point A
+     *
+     * @param $app      Application
+     * @param $req      Request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function getFlightsFromXtoA(Application $app, Request $req)
+    {
+        return $app->json("ok", 200);
+    }
+
+    /**
+     * Récupérer les vols d'un point A vers X points
+     *
+     * @param $app      Application
+     * @param $req      Request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function getFlightsFromAtoX(Application $app, Request $req)
+    {
+        return $app->json("ok", 200);
     }
 }

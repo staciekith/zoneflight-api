@@ -27,7 +27,7 @@ class SkyscannerUtils
             "form_params" => $params
         ]);
 
-        return $response->getHeaders()["Location"][0];
+        return $response->getHeaders()['Location'][0];
     }
 
     /**
@@ -47,12 +47,18 @@ class SkyscannerUtils
         $request  = new Request('GET', $url);
         $response = $client->send($request);
 
-        $flights = $response->getBody()->getContents();
+        $flights = json_decode($response->getBody()->getContents(), true);
 
-        return json_decode($flights, true);
+        // Poll session until Status is "UpdatesComplete"
+        while ("UpdatesPending" === $flights['Status'])
+        {
+            $response = $client->send($request);
+            $flights = json_decode($response->getBody()->getContents(), true);
+        }
+
+        return $flights;
     }
 
-    // A voir après si on ne fait pas une entité Session et des validators symfony
     /**
      * Vérifie les paramètres entrés
      *
@@ -70,5 +76,17 @@ class SkyscannerUtils
         }
 
         return true;
+    }
+
+    /**
+     * Formatte les données reçues de l'API Skyscanner
+     *
+     * @param $results    array
+     *
+     * @return JSON
+     */
+    public static function format_results($results)
+    {
+
     }
 }

@@ -23,9 +23,7 @@ class FlightController implements ControllerProviderInterface
 
         $controllers->get('/flights', [$this, 'getFlightsFromAtoB']);
 
-        $controllers->get('/flights/departure', [$this, 'getFlightsFromXtoA']);
-
-        $controllers->get('/flights/arrival', [$this, 'getFlightsFromAtoX']);
+        $controllers->get('/flights/xtox', [$this, 'getFlightsFromXtoX']);
 
         return $controllers;
     }
@@ -40,7 +38,7 @@ class FlightController implements ControllerProviderInterface
      */
     public function getFlightsFromAtoB(Application $app, Request $req)
     {
-        //$params = $req->query->all();
+        //$params = $req->request->all();
 
         $mandatory = [
             "country",
@@ -49,7 +47,7 @@ class FlightController implements ControllerProviderInterface
             "originplace",
             "destinationplace",
             "outbounddate",
-            "adults"
+            "adults",
         ];
 
         $params = [
@@ -58,10 +56,13 @@ class FlightController implements ControllerProviderInterface
             "locale"           => "FR",
             "originplace"      => "CDG-sky",
             "destinationplace" => "KIX-sky",
-            "outbounddate"     => "2016-09-23",
+            "outbounddate"     => "2016-10-23",
+            //"inbounddate"      => "2016-12-23",
             "adults"           => 2,
             "groupPricing"     => true
         ];
+
+        $params['locationschema'] = "Iata";
 
         if (false === SkyscannerUtils::verifyFields($mandatory, $params)) {
             return $app->abort(400, "Missing fields");
@@ -75,28 +76,16 @@ class FlightController implements ControllerProviderInterface
     }
 
     /**
-     * Récupérer les vols de X points vers un point A
+     * Récupérer les vols de X points vers X points
      *
      * @param $app      Application
      * @param $req      Request
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getFlightsFromXtoA(Application $app, Request $req)
+    public function getFlightsFromXtoX(Application $app, Request $req)
     {
         return $app->json("ok", 200);
     }
 
-    /**
-     * Récupérer les vols d'un point A vers X points
-     *
-     * @param $app      Application
-     * @param $req      Request
-     *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function getFlightsFromAtoX(Application $app, Request $req)
-    {
-        return $app->json("ok", 200);
-    }
 }

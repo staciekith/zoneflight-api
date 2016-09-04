@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use ZoneFlight\Entities\Airport;
+use Zoneflight\Utils\DistanceUtils;
 
 class AirportController implements ControllerProviderInterface
 {
@@ -26,7 +27,7 @@ class AirportController implements ControllerProviderInterface
                     ->assert("airport", "\d+")
                     ->convert("airport", $app["findOneOr404"]('Airport', 'id'));
 
-        $controllers->get('/airports/circle', [$this, 'getAirportForCircle']);
+        $controllers->put('/airports/circle', [$this, 'getAirportForCircle']);
 
         return $controllers;
     }
@@ -59,7 +60,7 @@ class AirportController implements ControllerProviderInterface
     }
 
     /**
-     * Récupérer les aéroports dans un cercle
+     * Récupérer les aéroports dans un cercle (rayon en KM)
      *
      * @param $app      Application
      * @param $req      Request
@@ -68,6 +69,31 @@ class AirportController implements ControllerProviderInterface
      */
     public function getAirportForCircle(Application $app, Request $req)
     {
-        return $app->json("ok", 200);
+        $datas = $req->request->all();
+        $mandatory = [ "lon", "lat", "rad" ];
+        $missing_fields = array_diff($mandatory, array_keys($datas));
+
+        if (0 !== count($missing_fields)) {
+            return $app->abort(400, "Missing fields");
+        }
+
+        $from = [
+            "lon" => $datas["lon"],
+            "lat" => $datas["lat"]
+        ];
+        $all_airports = $app["repositories"]("Airport")->findAll();
+        $airports_in = [];
+        foreach ($all_airports as $airport) {
+            $to = [
+                "lon" => $airport->getLon(),
+                "lat" => $airport->getLat()
+            ];
+            $distance = DistanceUtils::distance($from, $to);
+            if ($distance < $rad) {
+                $airports_in[] = $airport->toArray();
+            }
+        }
+
+        return $app->json($airports_in, 200);
     }
 }

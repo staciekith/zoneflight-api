@@ -40,6 +40,8 @@ class FlightController implements ControllerProviderInterface
     {
         //$params = $req->request->all();
 
+        // TODO: tester avec une date de retour
+
         $mandatory = [
             "country",
             "currency",
@@ -71,6 +73,7 @@ class FlightController implements ControllerProviderInterface
         $session_url = SkyscannerUtils::getSession($app, $params);
 
         $flights = SkyscannerUtils::getFlights($app, $session_url);
+        $flights = SkyscannerUtils::formatResults($flights);
 
         return $app->json($flights, 200);
     }

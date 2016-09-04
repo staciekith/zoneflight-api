@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use ZoneFlight\Entities\Airport;
-use Zoneflight\Utils\DistanceUtils;
+use ZoneFlight\Utils\DistanceUtils;
 
 class AirportController implements ControllerProviderInterface
 {
@@ -81,15 +81,16 @@ class AirportController implements ControllerProviderInterface
             "lon" => $datas["lon"],
             "lat" => $datas["lat"]
         ];
+
         $all_airports = $app["repositories"]("Airport")->findAll();
-        $airports_in = [];
+        $airports_in  = [];
         foreach ($all_airports as $airport) {
             $to = [
                 "lon" => $airport->getLon(),
                 "lat" => $airport->getLat()
             ];
             $distance = DistanceUtils::distance($from, $to);
-            if ($distance < $rad) {
+            if ($distance < $datas["rad"]) {
                 $airports_in[] = $airport->toArray();
             }
         }

@@ -1,0 +1,13 @@
+language: php
+php:
+    - '7.0'
+
+before_script:
+    - rm -rf vendor/
+    - composer install --prefer-source --no-interaction --dev
+
+script:
+    - phpunit
+
+notifications:
+    email: false

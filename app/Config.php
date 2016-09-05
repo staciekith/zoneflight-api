@@ -56,9 +56,10 @@ class Config implements ServiceProviderInterface
         $app['application_namespace'] = __NAMESPACE__;
         $app['skyscanner_api_key']    = "zo161174458452588133442487111447";
 
-        $app['db_host'] = getenv("ZONEFLIGHT_DATABASE_HOST");
-        $app['db_name'] = getenv("ZONEFLIGHT_DATABASE_NAME");
-        $app['db_user'] = getenv("ZONEFLIGHT_DATABASE_USER");
+        $app['db_host']     = getenv("ZONEFLIGHT_DATABASE_HOST");
+        $app['db_name']     = getenv("ZONEFLIGHT_DATABASE_NAME");
+        $app['db_user']     = getenv("ZONEFLIGHT_DATABASE_USER");
+        $app['db_password'] = getenv("ZONEFLIGHT_DATABASE_PWD");
     }
 
     /**
@@ -80,7 +81,7 @@ class Config implements ServiceProviderInterface
             'host'     => $app['db_host'],
             'dbname'   => $app['db_name'],
             'user'     => $app['db_user'],
-            'password' => '',
+            'password' => $app['db_password'],
         );
 
         // Doctrine (orm)

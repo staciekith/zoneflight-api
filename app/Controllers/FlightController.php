@@ -21,9 +21,9 @@ class FlightController implements ControllerProviderInterface
         /* @var $controllers ControllerCollection */
         $controllers = $app['controllers_factory'];
 
-        $controllers->get('/flights', [$this, 'getFlightsFromAtoB']);
+        $controllers->put('/flights', [$this, 'getFlightsFromAtoB']);
 
-        $controllers->get('/flights/xtox', [$this, 'getFlightsFromXtoX']);
+        $controllers->put('/flights/xtox', [$this, 'getFlightsFromXtoX']);
 
         return $controllers;
     }
@@ -38,9 +38,7 @@ class FlightController implements ControllerProviderInterface
      */
     public function getFlightsFromAtoB(Application $app, Request $req)
     {
-        //$params = $req->request->all();
-
-        // TODO: tester avec une date de retour
+        $params = $req->request->all();
 
         $mandatory = [
             "country",
@@ -52,27 +50,34 @@ class FlightController implements ControllerProviderInterface
             "adults",
         ];
 
-        $params = [
-            "country"          => "FR",
-            "currency"         => "EUR",
-            "locale"           => "FR",
-            "originplace"      => "CDG-sky",
-            "destinationplace" => "KIX-sky",
-            "outbounddate"     => "2016-10-23",
-            //"inbounddate"      => "2016-12-23",
-            "adults"           => 2,
-            "groupPricing"     => true
-        ];
+        // $params = [
+        //     "country"          => "FR",
+        //     "currency"         => "EUR",
+        //     "locale"           => "FR",
+        //     "originplace"      => "CDG-sky",
+        //     "destinationplace" => "KIX-sky",
+        //     "outbounddate"     => "2016-10-23",
+        //     "inbounddate"      => "2016-12-23",
+        //     "adults"           => 2,
+        //     "children"         => 0,
+        //     "infants"          => 0,
+        //     "cabinclass"       => "Economy",
+        // ];
 
         $params['locationschema'] = "Iata";
+        $params["groupPricing"]   = true;
 
         if (false === SkyscannerUtils::verifyFields($mandatory, $params)) {
             return $app->abort(400, "Missing fields");
         }
 
         $session_url = SkyscannerUtils::getSession($app, $params);
+        $flights     = SkyscannerUtils::getFlights($app, $session_url);
 
-        $flights = SkyscannerUtils::getFlights($app, $session_url);
+        if (null === $flights) {
+            return $app->abort(404, "Flights not found");
+        }
+
         $flights = SkyscannerUtils::formatResults($flights);
 
         return $app->json($flights, 200);

@@ -37,11 +37,14 @@ Une fois la database `zoneflight` créée, il faut :
 Formats de données :
 
 - PUT sur /airports/circle : (aéroport dans un cercle)
+
     Request :
     ```
     [
         "lon", "lat", "rad"
-    ]```
+    ]
+    ```
+
     Response :
     ```
     [
@@ -71,6 +74,7 @@ Formats de données :
     ```
 
 - PUT sur /airports/flights :
+
     Request :
     ```
     [
@@ -78,6 +82,7 @@ Formats de données :
         "outbounddate", "inbounddate", "adults", "children", "infants", "cabinclass"
     ]
     ```
+
     Response :
     ```
     [

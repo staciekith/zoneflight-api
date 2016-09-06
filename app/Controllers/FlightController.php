@@ -79,7 +79,67 @@ class FlightController implements ControllerProviderInterface
      */
     public function getFlightsFromXtoX(Application $app, Request $req)
     {
-        return $app->json("ok", 200);
+        $params = $req->request->all();
+
+        $mandatory = [
+            "country",
+            "currency",
+            "locale",
+            "outbounddate",
+            "adults",
+            "origins",
+            "destinations"
+        ];
+
+        // $params = [
+        //     "country"          => "FR",
+        //     "currency"         => "EUR",
+        //     "locale"           => "FR",
+        //     "outbounddate"     => "2016-10-23",
+        //     "inbounddate"      => "2016-12-23",
+        //     "adults"           => 2,
+        //     "children"         => 0,
+        //     "infants"          => 0,
+        //     "cabinclass"       => "Economy",
+        //     "origins"          => [
+        //         "CDG", "ORY"
+        //     ],
+        //     "destinations"     => [
+        //         "KIX", "ITM"
+        //     ]
+        // ];
+
+        $params["locationschema"] = "Iata";
+        $params["groupPricing"]   = true;
+        $params["sorttype"]       = "price";
+        $params["sortorder"]      = "asc";
+
+        if (false === SkyscannerUtils::verifyFields($mandatory, $params)) {
+            return $app->abort(400, "Missing fields");
+        }
+
+        $origins      = $params["origins"];
+        $destinations = $params["destinations"];
+        $flights      = [];
+
+        unset($params["origins"]);
+        unset($params["destinations"]);
+
+        $param_one = $params;
+
+        foreach ($origins as $ori) {
+            $flights[$ori] = [];
+            foreach ($destinations as $dest) {
+                $flights[$ori][$dest] = [];
+                $param_one["originplace"]      = $ori;
+                $param_one["destinationplace"] = $dest;
+
+                $results = FlightsUtils::getFlightsPointToPoint($app, $param_one);
+                $flights[$ori][$dest] = null === $results ? $flights[$ori][$dest] : array_merge($flights[$ori][$dest], $results);
+            }
+        }
+
+        return $app->json($flights, 200);
     }
 
 }

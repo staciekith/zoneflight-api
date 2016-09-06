@@ -92,31 +92,54 @@ class SkyscannerUtils
         $itineraries   = $results["Itineraries"];
         $legs          = $results["Legs"];
         $airports      = $results["Places"];
-        for ($i = 0; $i < count($itineraries); $i++) {
+
+        for ($i = 0; $i < count($legs); $i++) {
             $pre_formatted[] = [
                 "itinerary" => $itineraries[$i],
                 "leg"       => $legs[$i]
             ];
         }
+
         foreach ($pre_formatted as $item) {
             $formatted[] = [
-                "id"          => $item["itinerary"]["OutboundLegId"],
+                "outbound_id" => $item["itinerary"]["OutboundLegId"],
+                "inbound_id"  => empty($item["itinerary"]["InboundLegId"]) ? null : $item["itinerary"]["InboundLegId"],
                 "booking"     => $item["itinerary"]["BookingDetailsLink"],
-                "direction"   => $item["leg"]["Directionality"],
-                "origin"      => $item["leg"]["OriginStation"],
-                "destination" => $item["leg"]["DestinationStation"],
-                "departure"   => $item["leg"]["Departure"],
-                "arrival"     => $item["leg"]["Arrival"],
-                "stops"       => count($item["leg"]["Stops"]),
                 "price"       => $item["itinerary"]["PricingOptions"][0]["Price"]
             ];
         }
+
         foreach ($formatted as &$item) {
-            $origin              = self::findAirportFromId($airports, $item["origin"]);
-            $dest                = self::findAirportFromId($airports, $item["destination"]);
-            $item["origin"]      = $origin;
-            $item["destination"] = $dest;
+            $inbound  = null === $item["inbound_id"] ? null : self::findLegFromId($legs, $item["inbound_id"]);
+            $outbound = null === $item["outbound_id"] ? null : self::findLegFromId($legs, $item["outbound_id"]);
+
+            if (null !== $inbound) {
+                $item["inbound"] = [
+                    "direction"   => $inbound["Directionality"],
+                    "origin"      => $inbound["OriginStation"],
+                    "destination" => $inbound["DestinationStation"],
+                    "departure"   => $inbound["Departure"],
+                    "arrival"     => $inbound["Arrival"],
+                    "stops"       => count($inbound["Stops"])
+                ];
+                $item["inbound"]["origin"]      = self::findAirportFromId($airports, $item["inbound"]["origin"]);
+                $item["inbound"]["destination"] = self::findAirportFromId($airports, $item["inbound"]["destination"]);
+            }
+
+            if (null !== $outbound) {
+                $item["outbound"] = [
+                    "direction"   => $outbound["Directionality"],
+                    "origin"      => $outbound["OriginStation"],
+                    "destination" => $outbound["DestinationStation"],
+                    "departure"   => $outbound["Departure"],
+                    "arrival"     => $outbound["Arrival"],
+                    "stops"       => count($outbound["Stops"])
+                ];
+                $item["outbound"]["origin"]      = self::findAirportFromId($airports, $item["outbound"]["origin"]);
+                $item["outbound"]["destination"] = self::findAirportFromId($airports, $item["outbound"]["destination"]);
+            }
         }
+
         return $formatted;
     }
 
@@ -133,6 +156,25 @@ class SkyscannerUtils
         foreach ($places as $place) {
             if ($place["Id"] === $id) {
                 return $place;
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * Trouve le leg via son id renvoyé par Skyscanner
+     *
+     * @param $id          string
+     * @param $legs        array
+     *
+     * @return array
+     */
+    private static function findLegFromId(array $legs, $id)
+    {
+       foreach ($legs as $leg) {
+            if ($leg["Id"] === $id) {
+                return $leg;
             }
         }
 

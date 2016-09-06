@@ -69,8 +69,8 @@ class AirportController implements ControllerProviderInterface
      */
     public function getAirportForCircle(Application $app, Request $req)
     {
-        $datas = $req->request->all();
-        $mandatory = [ "lon", "lat", "rad" ];
+        $datas          = $req->request->all();
+        $mandatory      = [ "lon", "lat", "rad" ];
         $missing_fields = array_diff($mandatory, array_keys($datas));
 
         if (0 !== count($missing_fields)) {

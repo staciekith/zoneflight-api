@@ -1,6 +1,6 @@
 <?php
 
-namespace Zoneflight\Utils;
+namespace ZoneFlight\Utils;
 
 use Silex\Application;
 use GuzzleHttp\Client;

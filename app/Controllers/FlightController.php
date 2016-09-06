@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use ZoneFlight\Entities\Airport;
 use ZoneFlight\Utils\SkyscannerUtils;
+use ZoneFlight\Utils\FlightsUtils;
 
 class FlightController implements ControllerProviderInterface
 {
@@ -50,35 +51,20 @@ class FlightController implements ControllerProviderInterface
             "adults",
         ];
 
-        // $params = [
-        //     "country"          => "FR",
-        //     "currency"         => "EUR",
-        //     "locale"           => "FR",
-        //     "originplace"      => "CDG-sky",
-        //     "destinationplace" => "KIX-sky",
-        //     "outbounddate"     => "2016-10-23",
-        //     "inbounddate"      => "2016-12-23",
-        //     "adults"           => 2,
-        //     "children"         => 0,
-        //     "infants"          => 0,
-        //     "cabinclass"       => "Economy",
-        // ];
-
-        $params['locationschema'] = "Iata";
+        $params["locationschema"] = "Iata";
         $params["groupPricing"]   = true;
+        $params["sorttype"]       = "price";
+        $params["sortorder"]      = "asc";
 
         if (false === SkyscannerUtils::verifyFields($mandatory, $params)) {
             return $app->abort(400, "Missing fields");
         }
 
-        $session_url = SkyscannerUtils::getSession($app, $params);
-        $flights     = SkyscannerUtils::getFlights($app, $session_url);
+        $flights = FlightsUtils::getFlightsPointToPoint($app, $params);
 
         if (null === $flights) {
             return $app->abort(404, "Flights not found");
         }
-
-        $flights = SkyscannerUtils::formatResults($flights);
 
         return $app->json($flights, 200);
     }

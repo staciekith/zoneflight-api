@@ -39,7 +39,8 @@ class FlightController implements ControllerProviderInterface
      */
     public function getFlightsFromAtoB(Application $app, Request $req)
     {
-        $params = $req->request->all();
+        // $params = $req->request->all();
+        $params = json_decode($req->getContent(), true);
 
         $mandatory = [
             "country",
@@ -79,7 +80,8 @@ class FlightController implements ControllerProviderInterface
      */
     public function getFlightsFromXtoX(Application $app, Request $req)
     {
-        $params = $req->request->all();
+        // $params = $req->request->all();
+        $params = json_decode($req->getContent(), true);
 
         $mandatory = [
             "country",

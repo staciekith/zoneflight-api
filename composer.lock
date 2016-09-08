@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "277381c3652035f0810bcfa11b4f5914",
-    "content-hash": "aa01c845096f0ef915c50b8ccb9d58cc",
+    "hash": "d9569a612efaf95432773f7418fa48ad",
+    "content-hash": "bd532fc10770658fe28536dcb199fdf6",
     "packages": [
         {
             "name": "deployer/deployer",
@@ -1203,6 +1203,56 @@
                 "version"
             ],
             "time": "2014-05-27 05:29:25"
+        },
+        {
+            "name": "jdesrosiers/silex-cors-provider",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jdesrosiers/silex-cors-provider.git",
+                "reference": "6d4d487edbf965f5802f744bfd8f97a84f3522a2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jdesrosiers/silex-cors-provider/zipball/6d4d487edbf965f5802f744bfd8f97a84f3522a2",
+                "reference": "6d4d487edbf965f5802f744bfd8f97a84f3522a2",
+                "shasum": ""
+            },
+            "require": {
+                "silex/silex": "~2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*",
+                "symfony/browser-kit": "2.3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "JDesrosiers\\Silex\\Provider\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jason Desrosiers",
+                    "email": "jdesrosi@gmail.com"
+                }
+            ],
+            "description": "A silex service provider that adds CORS services to silex",
+            "keywords": [
+                "cors",
+                "cross",
+                "origin",
+                "provider",
+                "resource",
+                "service",
+                "sharing",
+                "silex"
+            ],
+            "time": "2016-06-05 21:39:17"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -3071,16 +3121,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.5.1",
+            "version": "1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "a8773992b362b58498eed24bf85005f363c34771"
+                "reference": "da8529775f14f4fdae33f916eb0cf65f6afbddbc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/a8773992b362b58498eed24bf85005f363c34771",
-                "reference": "a8773992b362b58498eed24bf85005f363c34771",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/da8529775f14f4fdae33f916eb0cf65f6afbddbc",
+                "reference": "da8529775f14f4fdae33f916eb0cf65f6afbddbc",
                 "shasum": ""
             },
             "require": {
@@ -3109,7 +3159,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2015-11-20 12:04:31"
+            "time": "2016-09-06 16:07:05"
         },
         {
             "name": "pdepend/pdepend",
@@ -4876,7 +4926,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "jdesrosiers/silex-cors-provider": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

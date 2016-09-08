@@ -9,6 +9,7 @@ use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
 use Silex\Provider\DoctrineServiceProvider;
+use JDesrosiers\Silex\Provider\CorsServiceProvider;
 use Dflydev\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\Console\Provider\ConsoleProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Provider\DoctrineOrmManagerRegistryProvider;
@@ -38,6 +39,7 @@ class Config implements ServiceProviderInterface
         $this->registerEnvironmentParams($app);
         $this->registerServiceProviders($app);
         $this->registerRoutes($app);
+        $app->after($app["cors"]);
     }
 
     /**
@@ -111,6 +113,7 @@ class Config implements ServiceProviderInterface
 
         $app->register(new ConsoleProvider());
         $app->register(new DoctrineOrmManagerRegistryProvider());
+        $app->register(new CorsServiceProvider());
     }
 
     /**

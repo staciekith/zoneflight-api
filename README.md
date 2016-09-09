@@ -194,9 +194,8 @@ Formats de données :
     Request :
     ```
     [
-        "country", "currency", "locale", "originplace", "destinationplace",
-        "outbounddate", "inbounddate", "adults", "children", "infants", "cabinclass",
-        "origins", "destinations"
+        "country", "currency", "locale", "outbounddate", "inbounddate", "adults",
+        "children", "infants", "cabinclass", "origins", "destinations"
     ]
     ```
 

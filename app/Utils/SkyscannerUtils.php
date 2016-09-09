@@ -50,10 +50,11 @@ class SkyscannerUtils
         $flights = json_decode($response->getBody()->getContents(), true);
 
         // Poll session until Status is "UpdatesComplete"
-        while ("UpdatesPending" === $flights['Status'])
+        while ("UpdatesComplete" !== $flights['Status'])
         {
+            $request  = new Request('GET', $url);
             $response = $client->send($request);
-            $flights = json_decode($response->getBody()->getContents(), true);
+            $flights  = json_decode($response->getBody()->getContents(), true);
         }
 
         return $flights;

@@ -119,7 +119,6 @@ class FlightController implements ControllerProviderInterface
         if (false === SkyscannerUtils::verifyFields($mandatory, $params)) {
             return $app->abort(400, "Missing fields");
         }
-
         $origins      = $params["origins"];
         $destinations = $params["destinations"];
         $flights      = [];

@@ -136,34 +136,40 @@ class SkyscannerUtils
 
             // On récupère les informations du trajet retour
             if (null !== $inbound) {
-                $item["inbound"] = [
-                    "direction"   => $inbound["Directionality"],
-                    "origin"      => $inbound["OriginStation"],
-                    "destination" => $inbound["DestinationStation"],
-                    "departure"   => $inbound["Departure"],
-                    "arrival"     => $inbound["Arrival"],
-                    "stops"       => count($inbound["Stops"])
-                ];
-                $item["inbound"]["origin"]      = self::findAirportFromId($airports, $item["inbound"]["origin"]);
-                $item["inbound"]["destination"] = self::findAirportFromId($airports, $item["inbound"]["destination"]);
+                $item["inbound"] = self::getLegInformation($inbound, $airports);
             }
 
             // On récupère les informations du trajet aller
             if (null !== $outbound) {
-                $item["outbound"] = [
-                    "direction"   => $outbound["Directionality"],
-                    "origin"      => $outbound["OriginStation"],
-                    "destination" => $outbound["DestinationStation"],
-                    "departure"   => $outbound["Departure"],
-                    "arrival"     => $outbound["Arrival"],
-                    "stops"       => count($outbound["Stops"])
-                ];
-                $item["outbound"]["origin"]      = self::findAirportFromId($airports, $item["outbound"]["origin"]);
-                $item["outbound"]["destination"] = self::findAirportFromId($airports, $item["outbound"]["destination"]);
+                $item["outbound"] = self::getLegInformation($outbound, $airports);
             }
         }
 
         return $formatted;
+    }
+
+    /**
+     * Récupère les informations d'un trajet donné
+     *
+     * @param $leg          array
+     * @param $airports     array
+     *
+     * @return array
+     */
+    private static function getLegInformation($leg, $airports)
+    {
+        $leg_informations = [
+            "direction"   => $leg["Directionality"],
+            "origin"      => $leg["OriginStation"],
+            "destination" => $leg["DestinationStation"],
+            "departure"   => $leg["Departure"],
+            "arrival"     => $leg["Arrival"],
+            "stops"       => count($leg["Stops"])
+        ];
+        $leg_informations["origin"]      = self::findAirportFromId($airports, $leg_informations["origin"]);
+        $leg_informations["destination"] = self::findAirportFromId($airports, $leg_informations["destination"]);
+
+        return $leg_informations;
     }
 
     /**

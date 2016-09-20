@@ -93,24 +93,6 @@ class FlightController implements ControllerProviderInterface
             "destinations"
         ];
 
-        // $params = [
-        //     "country"          => "FR",
-        //     "currency"         => "EUR",
-        //     "locale"           => "FR",
-        //     "outbounddate"     => "2016-10-23",
-        //     "inbounddate"      => "2016-12-23",
-        //     "adults"           => 2,
-        //     "children"         => 0,
-        //     "infants"          => 0,
-        //     "cabinclass"       => "Economy",
-        //     "origins"          => [
-        //         "CDG", "ORY"
-        //     ],
-        //     "destinations"     => [
-        //         "KIX", "ITM"
-        //     ]
-        // ];
-
         $params["locationschema"] = "Iata";
         $params["groupPricing"]   = true;
         $params["sorttype"]       = "price";
@@ -119,6 +101,7 @@ class FlightController implements ControllerProviderInterface
         if (false === SkyscannerUtils::verifyFields($mandatory, $params)) {
             return $app->abort(400, "Missing fields");
         }
+
         $origins      = $params["origins"];
         $destinations = $params["destinations"];
         $flights      = [];

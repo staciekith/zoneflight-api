@@ -44,18 +44,31 @@ class SkyscannerUtils
 
         $url = $session_url . "?apiKey={$app['skyscanner_api_key']}";
 
-        $request  = new Request('GET', $url);
-        $response = $client->send($request);
+        $flights = self::pullSession($client, $url);
 
-        $flights = json_decode($response->getBody()->getContents(), true);
-
-        // Poll session until Status is "UpdatesComplete"
+        // Pull session until Status is "UpdatesComplete"
         while ("UpdatesComplete" !== $flights['Status'])
         {
-            $request  = new Request('GET', $url);
-            $response = $client->send($request);
-            $flights  = json_decode($response->getBody()->getContents(), true);
+            $flights = self::pullSession($client, $url);
+            sleep(2);
         }
+
+        return $flights;
+    }
+
+    /**
+     * Faire une requête à l'API Skyscanner
+     *
+     * @param $client       Client
+     * @param $session_url  string
+     *
+     * @return array
+     */
+    public static function pullSession(Client $client, $session_url)
+    {
+        $request  = new Request('GET', $session_url);
+        $response = $client->send($request);
+        $flights  = json_decode($response->getBody()->getContents(), true);
 
         return $flights;
     }
@@ -94,6 +107,7 @@ class SkyscannerUtils
         $legs          = $results["Legs"];
         $airports      = $results["Places"];
 
+        // On récupère tous les itinéraires et les legs (trajets)
         for ($i = 0; $i < count($legs); $i++) {
             $pre_formatted[] = [
                 "itinerary" => $itineraries[$i],
@@ -101,6 +115,11 @@ class SkyscannerUtils
             ];
         }
 
+        // Pour chaque itinéraire, on filtre les informations pour ne récupérer que
+        // - l'id de l'itinéraire aller
+        // - l'id de l'itinéraire retour
+        // - les informations pour la réservation
+        // - le prix
         foreach ($pre_formatted as $item) {
             $formatted[] = [
                 "outbound_id" => $item["itinerary"]["OutboundLegId"],
@@ -111,37 +130,46 @@ class SkyscannerUtils
         }
 
         foreach ($formatted as &$item) {
+            // Pour chaque itinéraire, on récupère le trajets aller-retour associés
             $inbound  = null === $item["inbound_id"] ? null : self::findLegFromId($legs, $item["inbound_id"]);
             $outbound = null === $item["outbound_id"] ? null : self::findLegFromId($legs, $item["outbound_id"]);
 
+            // On récupère les informations du trajet retour
             if (null !== $inbound) {
-                $item["inbound"] = [
-                    "direction"   => $inbound["Directionality"],
-                    "origin"      => $inbound["OriginStation"],
-                    "destination" => $inbound["DestinationStation"],
-                    "departure"   => $inbound["Departure"],
-                    "arrival"     => $inbound["Arrival"],
-                    "stops"       => count($inbound["Stops"])
-                ];
-                $item["inbound"]["origin"]      = self::findAirportFromId($airports, $item["inbound"]["origin"]);
-                $item["inbound"]["destination"] = self::findAirportFromId($airports, $item["inbound"]["destination"]);
+                $item["inbound"] = self::getLegInformation($inbound, $airports);
             }
 
+            // On récupère les informations du trajet aller
             if (null !== $outbound) {
-                $item["outbound"] = [
-                    "direction"   => $outbound["Directionality"],
-                    "origin"      => $outbound["OriginStation"],
-                    "destination" => $outbound["DestinationStation"],
-                    "departure"   => $outbound["Departure"],
-                    "arrival"     => $outbound["Arrival"],
-                    "stops"       => count($outbound["Stops"])
-                ];
-                $item["outbound"]["origin"]      = self::findAirportFromId($airports, $item["outbound"]["origin"]);
-                $item["outbound"]["destination"] = self::findAirportFromId($airports, $item["outbound"]["destination"]);
+                $item["outbound"] = self::getLegInformation($outbound, $airports);
             }
         }
 
         return $formatted;
+    }
+
+    /**
+     * Récupère les informations d'un trajet donné
+     *
+     * @param $leg          array
+     * @param $airports     array
+     *
+     * @return array
+     */
+    private static function getLegInformation($leg, $airports)
+    {
+        $leg_informations = [
+            "direction"   => $leg["Directionality"],
+            "origin"      => $leg["OriginStation"],
+            "destination" => $leg["DestinationStation"],
+            "departure"   => $leg["Departure"],
+            "arrival"     => $leg["Arrival"],
+            "stops"       => count($leg["Stops"])
+        ];
+        $leg_informations["origin"]      = self::findAirportFromId($airports, $leg_informations["origin"]);
+        $leg_informations["destination"] = self::findAirportFromId($airports, $leg_informations["destination"]);
+
+        return $leg_informations;
     }
 
     /**

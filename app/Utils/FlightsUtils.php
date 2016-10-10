@@ -18,7 +18,12 @@ class FlightsUtils
     public static function getFlightsPointToPoint(Application $app, array $params)
     {
         $session_url = SkyscannerUtils::getSession($app, $params);
-        $flights     = SkyscannerUtils::getFlights($app, $session_url);
+
+        if (null === $session_url) {
+            return null;
+        }
+
+        $flights = SkyscannerUtils::getFlights($app, $session_url);
 
         if (null === $flights) {
             return null;

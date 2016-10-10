@@ -14,18 +14,22 @@ class SkyscannerUtils
      * @param $app      Application
      * @param $params   array
      *
-     * @return string
+     * @return string|null
      */
     public static function getSession(Application $app, array $params)
     {
         $params["apiKey"] = $app['skyscanner_api_key'];
-
         $client = new Client();
 
         $request  = new Request('POST', 'http://partners.api.skyscanner.net/apiservices/pricing/v1.0');
-        $response = $client->send($request, [
-            "form_params" => $params
-        ]);
+
+        try {
+            $response = $client->send($request, [
+                "form_params" => $params
+            ]);
+        } catch (\Exception $exception) {
+            return null;
+        }
 
         return $response->getHeaders()['Location'][0];
     }

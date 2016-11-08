@@ -5,9 +5,84 @@ namespace ZoneFlight\Utils;
 use Silex\Application;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Promise;
 
 class SkyscannerUtils
 {
+    /**
+     * Récupérer les sessions Skyscanner en asynchrone
+     *
+     * @param $app           Application
+     * @param $base_params   array
+     * @param $origins       array
+     * @param $destinations  array
+     *
+     * @return array
+     */
+    public static function getAsyncSessions(Application $app, array $base_params, array $origins, array $destinations)
+    {
+        $sessions = [];
+        $promises = [];
+        $uri      = 'http://partners.api.skyscanner.net/apiservices/pricing/v1.0';
+        $client   = new Client();
+
+        $base_params["apiKey"] = $app['skyscanner_api_key'];
+
+        // Get sessions : POST pour chaque paire originplace/destinationplace
+        foreach ($origins as $ori) {
+            $sessions[$ori] = [];
+            foreach ($destinations as $dest) {
+                $sessions[$ori][$dest]           = [];
+                $base_params["originplace"]      = $ori;
+                $base_params["destinationplace"] = $dest;
+
+                $promises[] = $client->postAsync(
+                    $uri,
+                    [
+                        'form_params' => $base_params
+                    ]
+                )->then(function ($response) use (&$sessions, $ori, $dest) {
+                    $sessions[$ori][$dest] = $response->getHeaders()['Location'][0];
+                });
+            }
+        }
+
+        Promise\unwrap($promises);
+
+        return $sessions;
+    }
+
+    /**
+     * Récupérer les vols via Skyscanner en asynchrone
+     *
+     * @param $app           Application
+     * @param $sessions      array
+     *
+     * @return array
+     */
+    public static function getAsyncFlights(Application $app, $sessions)
+    {
+        $flights  = [];
+        $promises = [];
+
+        foreach ($sessions as $ori => $session_ori) {
+            $flights[$ori] = [];
+            foreach ($session_ori as $dest => $session_url) {
+                $flights[$ori][$dest] = [];
+
+                $url        = $session_url . "?apiKey={$app['skyscanner_api_key']}";
+                $client     = new Client();
+                $promises[] = $client->getAsync($url)->then(function ($response) use (&$flights, $ori, $dest) {
+                    $flights[$ori][$dest] = json_decode($response->getBody()->getContents(), true);
+                });
+            }
+        }
+
+        Promise\unwrap($promises);
+
+        return $flights;
+    }
+
     /**
      * Récupérer une session Skyscanner
      *

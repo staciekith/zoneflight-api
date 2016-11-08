@@ -39,8 +39,7 @@ class FlightController implements ControllerProviderInterface
      */
     public function getFlightsFromAtoB(Application $app, Request $req)
     {
-        // $params = $req->request->all();
-        $params = json_decode($req->getContent(), true);
+        $params = $req->request->all();
 
         $mandatory = [
             "country",
@@ -80,8 +79,7 @@ class FlightController implements ControllerProviderInterface
      */
     public function getFlightsFromXtoX(Application $app, Request $req)
     {
-        // $params = $req->request->all();
-        $params = json_decode($req->getContent(), true);
+        $params = $req->request->all();
 
         $mandatory = [
             "country",
@@ -111,15 +109,11 @@ class FlightController implements ControllerProviderInterface
 
         $param_one = $params;
 
-        foreach ($origins as $ori) {
-            $flights[$ori] = [];
-            foreach ($destinations as $dest) {
-                $flights[$ori][$dest] = [];
-                $param_one["originplace"]      = $ori;
-                $param_one["destinationplace"] = $dest;
-
-                $results = FlightsUtils::getFlightsPointToPoint($app, $param_one);
-                $flights[$ori][$dest] = null === $results ? $flights[$ori][$dest] : array_merge($flights[$ori][$dest], $results);
+        $sessions = SkyscannerUtils::getAsyncSessions($app, $param_one, $origins, $destinations);
+        $flights  = SkyscannerUtils::getAsyncFlights($app, $sessions);
+        foreach ($flights as &$flight_ori) {
+            foreach ($flight_ori as &$flight) {
+                $flight = SkyscannerUtils::formatResults($flight);
             }
         }
 

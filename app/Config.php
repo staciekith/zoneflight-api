@@ -14,6 +14,9 @@ use Dflydev\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\Console\Provider\ConsoleProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Provider\DoctrineOrmManagerRegistryProvider;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 /**
  * Configuration principale de l'application
  */
@@ -40,6 +43,22 @@ class Config implements ServiceProviderInterface
         $this->registerServiceProviders($app);
         $this->registerRoutes($app);
         $app->after($app["cors"]);
+
+        // On peut faire $req->request->all() ou $req->request->get('mavariable')
+        // au lieu de faire un json_decode($req->getContent(), true)
+        $app->before(function (Request $request) {
+            // on ne s'interese qu'aux requêtes de type "application/json"
+            if (0 !== strpos($request->headers->get('Content-Type'), 'application/json')) {
+                return;
+            }
+
+            $params = json_decode($request->getContent(), true);
+            if (false === is_array($params)) {
+                $this->app->abort(400, "Invalid JSON data");
+            }
+
+            $request->request->replace($params);
+        });
     }
 
     /**

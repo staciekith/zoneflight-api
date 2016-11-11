@@ -41,9 +41,14 @@ class SkyscannerUtils
                     [
                         'form_params' => $base_params
                     ]
-                )->then(function ($response) use (&$sessions, $ori, $dest) {
-                    $sessions[$ori][$dest] = $response->getHeaders()['Location'][0];
-                });
+                )->then(
+                    function ($response) use (&$sessions, $ori, $dest) {
+                        $sessions[$ori][$dest] = $response->getHeaders()['Location'][0];
+                    },
+                    function ($exception) use (&$sessions, $ori, $dest) {
+                        $sessions[$ori][$dest] = null;
+                    }
+                );
             }
         }
 
@@ -69,6 +74,11 @@ class SkyscannerUtils
             $flights[$ori] = [];
             foreach ($session_ori as $dest => $session_url) {
                 $flights[$ori][$dest] = [];
+
+                if (null === $session_url) {
+                    $flights[$ori][$dest] = null;
+                    continue;
+                }
 
                 $url        = $session_url . "?apiKey={$app['skyscanner_api_key']}";
                 $client     = new Client();

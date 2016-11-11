@@ -113,7 +113,7 @@ class FlightController implements ControllerProviderInterface
         $flights  = SkyscannerUtils::getAsyncFlights($app, $sessions);
         foreach ($flights as &$flight_ori) {
             foreach ($flight_ori as &$flight) {
-                $flight = SkyscannerUtils::formatResults($flight);
+                $flight = empty($flight) ? null : SkyscannerUtils::formatResults($flight);
             }
         }
 

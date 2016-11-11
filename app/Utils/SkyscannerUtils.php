@@ -76,7 +76,6 @@ class SkyscannerUtils
                 $flights[$ori][$dest] = [];
 
                 if (null === $session_url) {
-                    $flights[$ori][$dest] = null;
                     continue;
                 }
 

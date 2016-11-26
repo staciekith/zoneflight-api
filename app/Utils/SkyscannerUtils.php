@@ -81,8 +81,17 @@ class SkyscannerUtils
 
                 $url        = $session_url . "?apiKey={$app['skyscanner_api_key']}";
                 $client     = new Client();
-                $promises[] = $client->getAsync($url)->then(function ($response) use (&$flights, $ori, $dest) {
+                $promises[] = $client->getAsync($url)->then(function ($response) use (&$flights, $ori, $dest, $url, $client) {
                     $flights[$ori][$dest] = json_decode($response->getBody()->getContents(), true);
+                    $flights[$ori][$dest]["url"] = $url;
+
+                    // Si on a des résultats, on pull la session jusqu'à avoir tous les résultats
+                    if (false === empty($flights[$ori][$dest]['Itineraries'])) {
+                        while ("UpdatesComplete" !== $flights[$ori][$dest]['Status']) {
+                            $flights[$ori][$dest] = self::pullSession($client, $url);
+                            sleep(2);
+                        }
+                    }
                 });
             }
         }
@@ -90,6 +99,19 @@ class SkyscannerUtils
         Promise\unwrap($promises);
 
         return $flights;
+    }
+
+    /**
+     * Récupérer les détails d'un itinéraire
+     *
+     * @param $app      Application
+     * @param $params   array
+     *
+     * @return array
+     */
+    public static function getFlightDetailsSession(Application $app, array $params)
+    {
+        $params["apiKey"] = $app['skyscanner_api_key'];
     }
 
     /**
@@ -197,10 +219,12 @@ class SkyscannerUtils
 
         // On récupère tous les itinéraires et les legs (trajets)
         for ($i = 0; $i < count($legs); $i++) {
-            $pre_formatted[] = [
-                "itinerary" => $itineraries[$i],
-                "leg"       => $legs[$i]
-            ];
+            if (!empty($itineraries[$i]) && !empty($legs[$i])) {
+                $pre_formatted[] = [
+                    "itinerary" => $itineraries[$i],
+                    "leg"       => $legs[$i]
+                ];
+            }
         }
 
         // Pour chaque itinéraire, on filtre les informations pour ne récupérer que

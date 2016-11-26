@@ -26,6 +26,8 @@ class FlightController implements ControllerProviderInterface
 
         $controllers->put('/flights/xtox', [$this, 'getFlightsFromXtoX']);
 
+        $controllers->put('/flights/details', [$this, 'getFlightsDetails']);
+
         return $controllers;
     }
 
@@ -110,6 +112,7 @@ class FlightController implements ControllerProviderInterface
         $param_one = $params;
 
         $sessions = SkyscannerUtils::getAsyncSessions($app, $param_one, $origins, $destinations);
+        sleep(2);
         $flights  = SkyscannerUtils::getAsyncFlights($app, $sessions);
 
         foreach ($flights as &$flight_ori) {
@@ -124,6 +127,30 @@ class FlightController implements ControllerProviderInterface
         }
 
         return $app->json($flights, 200);
+    }
+
+    /**
+     * Récupérer les détails d'un vol donné
+     *
+     * @param $app      Application
+     * @param $req      Request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function getFlightsDetails(Application $app, Request $req)
+    {
+        $params = $req->request->all();
+
+        $mandatory = [
+            "outboundlegid",
+            "inboundlegid"
+        ];
+
+        if (false === SkyscannerUtils::verifyFields($mandatory, $params)) {
+            return $app->abort(400, "Missing fields");
+        }
+
+        return $app->json($details, 200);
     }
 
 }

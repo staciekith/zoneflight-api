@@ -143,12 +143,17 @@ class FlightController implements ControllerProviderInterface
 
         $mandatory = [
             "outboundlegid",
-            "inboundlegid"
+            "inboundlegid",
+            "uri"
         ];
 
         if (false === SkyscannerUtils::verifyFields($mandatory, $params)) {
             return $app->abort(400, "Missing fields");
         }
+
+        $session = SkyscannerUtils::getFlightDetailsSession($app, $params);
+
+        $details = SkyscannerUtils::getBookingDetails($app, $session);
 
         return $app->json($details, 200);
     }

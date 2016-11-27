@@ -83,7 +83,6 @@ class SkyscannerUtils
                 $client     = new Client();
                 $promises[] = $client->getAsync($url)->then(function ($response) use (&$flights, $ori, $dest, $url, $client) {
                     $flights[$ori][$dest] = json_decode($response->getBody()->getContents(), true);
-                    $flights[$ori][$dest]["url"] = $url;
 
                     // Si on a des résultats, on pull la session jusqu'à avoir tous les résultats
                     if (false === empty($flights[$ori][$dest]['Itineraries'])) {
@@ -105,13 +104,64 @@ class SkyscannerUtils
      * Récupérer les détails d'un itinéraire
      *
      * @param $app      Application
-     * @param $params   array
+     * @param $params   array          Tableau avec outboundlegid, inboundlegid, uri
      *
-     * @return array
+     * @return string|null
      */
     public static function getFlightDetailsSession(Application $app, array $params)
     {
         $params["apiKey"] = $app['skyscanner_api_key'];
+        $uri              = $params["uri"];
+
+        unset($params["uri"]);
+
+        $client           = new Client();
+        $url              = "http://partners.api.skyscanner.net" . $uri;
+
+        $request = new Request('PUT', $url);
+
+        try {
+            $response = $client->send($request, [
+                "form_params" => $params
+            ]);
+        } catch (\Exception $exception) {
+            return null;
+        }
+
+        return $response->getHeaders()['Location'][0];
+
+    }
+
+    /**
+     * Récupérer les détails d'un vol
+     *
+     * @param $app          Application
+     * @param $session_url  string
+     *
+     * @return string|null
+     */
+    public static function getBookingDetails(Application $app, $session)
+    {
+        $client = new Client();
+
+        $url = $session . "?apiKey={$app['skyscanner_api_key']}";
+
+        $request  = new Request('GET', $url);
+
+        try {
+            $response = $client->send($request);
+            $details  = json_decode($response->getBody()->getContents(), true);
+        } catch (\Exception $exception) {
+            return null;
+        }
+
+        $details_link = null;
+
+        if (0 !== count($details["BookingOptions"][0]["BookingItems"])) {
+            $details_link = $details["BookingOptions"][0]["BookingItems"][0]["Deeplink"];
+        }
+
+        return $details_link;
     }
 
     /**
@@ -125,7 +175,7 @@ class SkyscannerUtils
     public static function getSession(Application $app, array $params)
     {
         $params["apiKey"] = $app['skyscanner_api_key'];
-        $client = new Client();
+        $client           = new Client();
 
         $request  = new Request('POST', 'http://partners.api.skyscanner.net/apiservices/pricing/v1.0');
 
